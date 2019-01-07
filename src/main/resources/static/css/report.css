@@ -1,0 +1,52 @@
+body, div, ul, li {
+    margin: 0;
+    padding: 0;
+}
+
+.logo {
+    margin: 20px;
+    font-size: 35px;
+    width: 500px;
+    float: left;
+}
+
+.loginInfo {
+    float: right;
+    margin: 58px 10px 10px;
+}
+
+.loginInfo ul, .loginInfo li{
+    display: block;
+    list-style: none;
+    float: left;
+    font-family: Arial sans-serif;
+    font-size: 18px;
+}
+
+.loginInfo li {
+    margin: 0 5px;
+}
+
+.second-menu li {
+    list-style-type: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: gray;
+    cursor: pointer;
+    padding: 6px 6px 6px 50px;
+}
+
+.second-menu li:hover {
+    color: black;
+}
+
+
+.loginBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -250px;
+    width: 500px;
+    height: 400px;
+}

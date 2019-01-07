@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="easyui-panel" title="" style="width:100%">
+    <div style="padding:10px 60px 20px 60px">
+        <form id="taskForm" method="post">
+            <table cellpadding="5">
+                <tr>
+                    <td>任务名称:</td>
+                    <td><input class="easyui-textbox" type="text" name="name" data-options="required:true" th:value="${task.name}"/></td>
+                </tr>
+                <tr>
+                    <td>任务类型:</td>
+                    <td>
+                        <select id="taskSelect" class="easyui-combobox" name="type" onchange="onChangeType();" style="cursor: pointer">
+                            <option value="1">手动任务</option>
+                            <option value="2">定时任务</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr id="cronTr" style="visibility: hidden">
+                    <td>cron表达式:</td>
+                    <td>
+                        <input class="easyui-textbox" type="text" id="cronExpress" name="cronExpress" th:value="${task.cronExpress}"/>
+                        <input type="button" value="..." onclick="openCronWin()">
+                        <a href="javascript:openLateTimes()">最近几次执行时间</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>任务内容:</td>
+                    <td><textarea class="easyui-textbox" name="detail" data-options="multiline:true, required:true" style="height:400px; width: 800px" th:text="${task.detail}"/></td>
+                </tr>
+            </table>
+            <input type="hidden" name="id" th:value="${task.id}">
+        </form>
+        <div id="dlg-buttons">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveTask()">保存</a>
+        </div>
+    </div>
+</div>
+
+<div id="cronWin" class="easyui-window" title="Cron 表达式" style="width:600px;height:400px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+</div>
+
+        <script th:inline="javascript">
+
+            $(document).ready(function() {
+
+                var id = [[${task.id}]];
+                var type = [[${task.type}]];
+
+                var options = $("#taskSelect").find("option");
+                for (var i = 0; i < options.length; i++) {
+                    if ($(options[i]).val() == type) {
+                        $(options[i]).attr("selected", "selected");
+                    }
+                }
+
+                $("#taskSelect").combobox({
+                    onSelect: function(obj) {
+                        if (obj.value == "1") {
+                            $("#cronTr").css("visibility", "hidden")
+                        } else {
+                            $("#cronTr").css("visibility", "visible")
+                        }
+                    }
+                })
+
+            });
+
+            function saveTask() {
+
+                $("#taskForm").form("submit", {
+                    url: '/task/' + [[${task.id}]],
+                    success: function(result) {
+                        $.messager.show(
+                            {
+                                title: '消息',
+                                msg: '编辑任务成功',
+                                showType: 'fade',
+                                style:{
+                                    right:'',
+                                    bottom:''
+                                }
+                            });
+                        $('#tab').tabs('close', "编辑任务");
+                        $("#taskGrid").datagrid('reload');
+                    }
+                })
+            }
+
+            function openCronWin() {
+                $("#cronWin").window("open");
+                $('#cronWin').window('refresh', '/html/task/cron.html');
+            }
+
+            function openLateTimes() {
+
+                var cron = $("#cronExpress").textbox("getValue");
+                if (!cron) {
+                    return;
+                }
+                $.get("/task/lateFireTimes", {cronExpress: cron}).then(function(datas) {
+                    var text = "";
+                    if (datas && datas.length > 0) {
+                        for (var i = 0; i < datas.length; i++) {
+                            text += datas[i]+"<br/>";
+                        }
+                    }
+                    $.messager.alert("最近几次执行时间", text);
+                });
+            }
+
+        </script>
+</body>
+</html>
