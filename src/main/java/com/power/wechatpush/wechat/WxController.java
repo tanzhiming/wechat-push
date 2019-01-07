@@ -1,5 +1,8 @@
 package com.power.wechatpush.wechat;
 
+import com.alibaba.fastjson.JSONObject;
+import com.power.wechatpush.dao.entity.WxUser;
+import com.power.wechatpush.service.WxUserService;
 import com.power.wechatpush.wechat.domain.AccessToken;
 import com.power.wechatpush.wechat.util.HttpUtil;
 import com.power.wechatpush.wechat.util.MessageUtil;
@@ -32,6 +35,9 @@ public class WxController {
     @Autowired
     private AccessTokenService accessTokenService;
 
+    @Autowired
+    private WxUserService wxUserService;
+
     private static final String USER_INFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN";
 
     @GetMapping(produces = {"text/plain;charset=UTF-8"})
@@ -58,11 +64,11 @@ public class WxController {
             if(MessageUtil.MSGTYPE_EVENT.equals(msgType)){//如果为事件类型
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
                     // 获取用户信息
-                    String jsonUser = getUserInfo(fromUserName);
-                    System.out.println(jsonUser);
-
+                    String jsonUserStr = getUserInfo(fromUserName);
+                    WxUser wxUser = JSONObject.parseObject(jsonUserStr, WxUser.class);
+                    wxUserService.saveUser(wxUser);
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-
+                    wxUserService.unSubscribe(fromUserName);
                 }
             }
         } catch (DocumentException e) {

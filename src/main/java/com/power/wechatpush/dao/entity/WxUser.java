@@ -2,8 +2,8 @@ package com.power.wechatpush.dao.entity;
 
 public class WxUser {
 
-    private String openId;
-    private String nickName;
+    private String openid;
+    private String nickname;
     private int sex;
     private String city;
     private String country;
@@ -12,20 +12,20 @@ public class WxUser {
     private int subscribe;
     private String remark;
 
-    public String getOpenId() {
-        return openId;
+    public String getOpenid() {
+        return openid;
     }
 
-    public void setOpenId(String openId) {
-        this.openId = openId;
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public int getSex() {

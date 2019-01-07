@@ -12,7 +12,7 @@
 </head>
 <body class="easyui-layout">
     <div data-options="region:'north',title:false, split:true" style="height:100px;">
-        <div class="logo">报表系统</div>
+        <div class="logo">微信推送</div>
         <div class="loginInfo">
             <ul>
                 <!--<li th:text=""></li>-->
@@ -22,21 +22,20 @@
     </div>
     <div data-options="region:'west',title:'导航',split:true" style="width:200px;">
         <div id="aa" class="easyui-accordion" style="width:300px;height:200px;">
-            <div title="系统设置" data-options="selected:true" style="overflow:auto;">
+            <div title="用户管理" data-options="selected:true" style="overflow:auto;">
                 <ul class="second-menu">
-                    <li><a onclick="openPage('数据源列表', 'html/system/datasource.html');">数据源列表</a></li>
-                    <!--<li><a>demo</a></li>-->
+                    <li><a onclick="openPage('用户列表', 'html/user/user.html');">用户列表</a></li>
+                </ul>
+            </div>
+            <div title="设备管理">
+                <ul class="second-menu">
+                    <li><a onclick="openPage('导出文件列表', 'html/report/export-file.html');">导出文件列表</a></li>
                 </ul>
             </div>
             <div title="任务管理" data-options="">
                 <ul class="second-menu">
                     <li><a onclick="openPage('任务列表', 'html/task/tasklist.html');">任务列表</a></li>
                     <li><a onclick="openPage('任务日志', 'html/task/tasklog.html')">任务执行日志</a></li>
-                </ul>
-            </div>
-            <div title="报表展示">
-                <ul class="second-menu">
-                    <li><a onclick="openPage('导出文件列表', 'html/report/export-file.html');">导出文件列表</a></li>
                 </ul>
             </div>
         </div>
