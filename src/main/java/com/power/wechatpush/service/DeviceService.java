@@ -59,6 +59,7 @@ public class DeviceService {
                         deviceDao.saveDevices(DevicePo.fromResources(id, device));
                     }
                 }
+                offset += deviceList.size();
             } while (deviceList != null && deviceList.size() == 500);
         } finally {
             ret = VideoSDK.close(sesson[0]);

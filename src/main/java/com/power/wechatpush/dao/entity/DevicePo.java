@@ -98,7 +98,7 @@ public class DevicePo {
         devicePo.setIndex(device.getIndex());
         devicePo.setName(device.getName());
         devicePo.setPuid(device.getPuid());
-        devicePo.setType(device.getName());
+        devicePo.setType(device.getType());
         devicePo.setUsable(device.getUsable());
         return devicePo;
     }
@@ -117,7 +117,7 @@ public class DevicePo {
                 devicePo.setIndex(resource.getIndex());
                 devicePo.setName(resource.getName());
                 devicePo.setPuid(resource.getPuid());
-                devicePo.setType(resource.getName());
+                devicePo.setType(resource.getType());
                 devicePo.setUsable(resource.getUsable());
                 devicePo.setParentId(devId);
                 devicePos.add(devicePo);
