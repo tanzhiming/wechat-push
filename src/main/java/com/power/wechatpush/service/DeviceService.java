@@ -2,6 +2,7 @@ package com.power.wechatpush.service;
 
 import com.power.wechatpush.dao.DeviceDao;
 import com.power.wechatpush.dao.entity.DevicePo;
+import com.power.wechatpush.util.Page;
 import com.power.wechatpush.video.Device;
 import com.power.wechatpush.video.VideoSDK;
 import org.slf4j.Logger;
@@ -70,4 +71,18 @@ public class DeviceService {
         LOG.info("spent time : {}ms", System.currentTimeMillis()-start);
         return true;
     }
+
+    public Page<DevicePo> queryDevices(String name, int page, int rows) {
+        int start = (page - 1) * rows;
+        List<DevicePo> deviceList = deviceDao.queryDevices(name,"SELF", null, start, rows);
+        int count = deviceDao.countDevices(name, "SELF", null);
+        if (deviceList != null) {
+            for (DevicePo dp : deviceList) {
+                List<DevicePo> children = deviceDao.queryDevices(null, "IV", dp.getId(), -1, -1);
+                dp.setChildren(children);
+            }
+        }
+        return Page.create(count, deviceList);
+    }
+
 }

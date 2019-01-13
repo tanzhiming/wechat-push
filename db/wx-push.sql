@@ -16,7 +16,7 @@ CREATE TABLE `tb_wx_user` (
 
 DROP TABLE IF EXISTS tb_device;
 CREATE TABLE `tb_device` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `puid` varchar(100) NOT NULL,
   `name` varchar(100) NOT NULL,
   `type` varchar(20) NOT NULL,
@@ -24,6 +24,5 @@ CREATE TABLE `tb_device` (
   `usable` int(11) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `parent_id` bigint(20) DEFAULT NULL,
-  `device_flag` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

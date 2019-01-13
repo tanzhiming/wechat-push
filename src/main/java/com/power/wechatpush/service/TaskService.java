@@ -1,48 +1,53 @@
 package com.power.wechatpush.service;
 
-import com.power.wechatpush.job.HelloJob;
-import org.quartz.*;
-import org.quartz.impl.matchers.GroupMatcher;
-import org.quartz.utils.Key;
+import com.power.wechatpush.dao.TaskDao;
+import com.power.wechatpush.dao.entity.Task;
+import com.power.wechatpush.dao.entity.TaskLog;
+import com.power.wechatpush.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
-@Service
+@Repository
 public class TaskService {
 
     @Autowired
-    @Qualifier("Scheduler")
-    private Scheduler scheduler;
+    private TaskDao taskDao;
 
-    public void addHelloTask(String cronExpress) throws SchedulerException {
-        JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("data", "hello world");
-        JobKey jobKey = new JobKey(Key.createUniqueName((String)null), (String)null);
-        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class).withIdentity(jobKey).setJobData(jobDataMap).build();
-        Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpress)).build();
-        scheduler.scheduleJob(jobDetail, trigger);
+    public List<Task> listTasks(){
+        return taskDao.listTasks();
+    }
+
+    public Task getTask(Long id){
+        return taskDao.getTask(id);
     }
 
 
-    public void getAllJobs(){
-        try {
-            for (String groupName : scheduler.getJobGroupNames()) {
-                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                    String jobName = jobKey.getName();
-                    String jobGroup = jobKey.getGroup();
-                    //get job's trigger
-                    List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
-                    Date nextFireTime = triggers.get(0).getNextFireTime();
-                    System.out.println("[jobName] : " + jobName + " [groupName] : "
-                            + jobGroup + " - " + nextFireTime);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void deleteTask(Long id){
+        taskDao.deleteTask(id);
+    }
+
+    @Transactional
+    public Task saveTask(Task task) {
+        return taskDao.saveTask(task);
+    }
+
+    @Transactional
+    public Task updateTask(Task task) {
+        return taskDao.updateTask(task);
+    }
+
+    @Transactional
+    public TaskLog insertTaskLog(TaskLog taskLog) {
+        return taskDao.insertTaskLog(taskLog);
+    }
+
+    public Page<TaskLog> getPageForTaskLog(int page, int rows) {
+        int start = (page - 1) * rows;
+        int total = taskDao.counTaskLog();
+        List<TaskLog> taskLogs = taskDao.queryTaskLogs(start, rows);
+        return Page.create(total, taskLogs);
     }
 }

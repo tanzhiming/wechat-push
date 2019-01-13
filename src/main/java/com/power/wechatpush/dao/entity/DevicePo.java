@@ -6,6 +6,7 @@ import com.power.wechatpush.video.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class DevicePo {
 
     private Long id;
@@ -16,7 +17,8 @@ public class DevicePo {
     private int usable;
     private String description;
     private Long parentId;
-    private int deviceFlag;
+
+    private List<DevicePo> children;
 
     public String getPuid() {
         return puid;
@@ -66,14 +68,6 @@ public class DevicePo {
         this.description = description;
     }
 
-    public int getDeviceFlag() {
-        return deviceFlag;
-    }
-
-    public void setDeviceFlag(int deviceFlag) {
-        this.deviceFlag = deviceFlag;
-    }
-
     public Long getId() {
         return id;
     }
@@ -92,9 +86,24 @@ public class DevicePo {
 
 
     public static DevicePo fromDevice(Device device) {
+        DevicePo devicePo = toDevicePo(device);
+        return devicePo;
+    }
+
+    private static DevicePo toDevicePo(Device device) {
         DevicePo devicePo = new DevicePo();
         devicePo.setDescription(device.getDescription());
-        devicePo.setDeviceFlag(1);
+        devicePo.setIndex(device.getIndex());
+        devicePo.setName(device.getName());
+        devicePo.setPuid(device.getPuid());
+        devicePo.setType(device.getType());
+        devicePo.setUsable(device.getUsable());
+        return devicePo;
+    }
+
+    private static DevicePo toDevicePo(Resource device) {
+        DevicePo devicePo = new DevicePo();
+        devicePo.setDescription(device.getDescription());
         devicePo.setIndex(device.getIndex());
         devicePo.setName(device.getName());
         devicePo.setPuid(device.getPuid());
@@ -111,14 +120,7 @@ public class DevicePo {
         List<DevicePo> devicePos = new ArrayList<>();
         if (device.getResources() != null) {
             for (Resource resource : device.getResources()) {
-                DevicePo devicePo = new DevicePo();
-                devicePo.setDescription(resource.getDescription());
-                devicePo.setDeviceFlag(0);
-                devicePo.setIndex(resource.getIndex());
-                devicePo.setName(resource.getName());
-                devicePo.setPuid(resource.getPuid());
-                devicePo.setType(resource.getType());
-                devicePo.setUsable(resource.getUsable());
+                DevicePo devicePo = toDevicePo(resource);
                 devicePo.setParentId(devId);
                 devicePos.add(devicePo);
             }
@@ -126,4 +128,11 @@ public class DevicePo {
         return devicePos;
     }
 
+    public List<DevicePo> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<DevicePo> children) {
+        this.children = children;
+    }
 }

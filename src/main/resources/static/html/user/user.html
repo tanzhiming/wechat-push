@@ -11,14 +11,14 @@
         <tr>
             <th data-options="field:'openid',width:200">openid</th>
             <th data-options="field:'headimgurl', width:100, formatter: formatHeadImage">头像</th>
-            <th data-options="field:'nickname', width:200">昵称</th>
+            <th data-options="field:'nickname', width:150">昵称</th>
             <th data-options="field:'remark', width:150">备注名称</th>
             <th data-options="field:'sex', width:100, formatter: formatSex">性别</th>
             <th data-options="field:'country', width:100">国家</th>
             <th data-options="field:'province', width:100">省份</th>
             <th data-options="field:'city', width:100">城市</th>
             <th data-options="field:'subscribe',width:100, formatter: formatSubscribe">是否关注</th>
-            <th data-options="field:'id',width:100, formatter: formatUser">操作</th>
+            <th data-options="field:'id',width:150, formatter: formatUser">操作</th>
         </tr>
         </thead>
     </table>
@@ -60,6 +60,7 @@
         function formatUser(value, row, index) {
             var html = '<div id="toolbar">';
             html = html + '<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="openRemarkDlg(\''+ row.openid + '\')">设置备注名</a>&nbsp';
+            html = html + '<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="openPushPage(\'推送设置\', \'push/config/'+ row.openid+'\', \''+ row.nickname +'\', \''+ row.remark+ '\')">推送设置</a>&nbsp';
             html = html+ '</div>';
             return html;
         }
@@ -112,6 +113,11 @@
 
                 }
             })
+        }
+
+        function openPushPage(title, url, nickname, remark) {
+            url = url + "?nickname=" + encodeURIComponent(nickname) + "&remark="+encodeURIComponent(remark);
+            openPage(title, url);
         }
     </script>
 </body>

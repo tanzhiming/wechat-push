@@ -42,4 +42,5 @@ public class WxUserController {
         }
         return true;
     }
+
 }
