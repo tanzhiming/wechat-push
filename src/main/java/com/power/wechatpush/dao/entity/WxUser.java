@@ -1,5 +1,7 @@
 package com.power.wechatpush.dao.entity;
 
+import org.springframework.util.StringUtils;
+
 public class WxUser {
 
     private String openid;
@@ -82,5 +84,14 @@ public class WxUser {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getName() {
+
+        String name = nickname;
+        if (!StringUtils.isEmpty(remark)) {
+            name += "(" + remark + ")";
+        }
+        return name;
     }
 }

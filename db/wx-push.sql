@@ -26,3 +26,25 @@ CREATE TABLE `tb_device` (
   `parent_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS tb_task;
+CREATE TABLE `tb_task` (
+  `f_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `f_name` varchar(60) DEFAULT NULL,
+  `f_type` int(11) DEFAULT NULL,
+  `f_cron_express` varchar(60) DEFAULT NULL,
+  `f_detail` varchar(500) DEFAULT NULL,
+  `f_job_name` varchar(255) DEFAULT NULL,
+  `f_job_group` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`f_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `tb_task_log` (
+  `f_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `f_task_name` varchar(60) DEFAULT NULL,
+  `f_task_type` int(11) DEFAULT NULL,
+  `f_log` text,
+  `f_create_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`f_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

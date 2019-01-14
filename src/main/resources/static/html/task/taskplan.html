@@ -11,29 +11,58 @@
             <table cellpadding="5" width="100%">
                 <tr>
                     <td>任务名称:</td>
-                    <td><input class="easyui-textbox" type="text" name="name" data-options="required:true"/></td>
+                    <td><input class="easyui-textbox" type="text" name="name" data-options="required:true,width:500"/></td>
                 </tr>
                 <tr>
-                    <td>任务类型:</td>
+                    <td>微信用户:</td>
                     <td>
-                        <select id="taskSelect" class="easyui-combobox" name="type" onchange="onChangeType();" style="cursor: pointer">
-                            <option value="1">手动任务</option>
-                            <option value="2">定时任务</option>
-                        </select>
+                        <input class="easyui-combobox" name="user"
+                               data-options="method: 'get',multiple:true,valueField:'openid',textField:'name',url:'user/getUsers', width:500">
                     </td>
-                </tr>
-                <tr id="cronTr" style="visibility: hidden">
-                    <td>cron表达式:</td>
-                    <td>
-                        <input class="easyui-textbox" type="text" id="cronExpress" name="cronExpress"/>
-                        <input type="button" value="..." onclick="openCronWin()">
-                        <a href="javascript:openLateTimes()">最近几次执行时间</a>
-                </td>
                 </tr>
 
                 <tr>
-                    <td>任务内容:</td>
-                    <td><input class="easyui-textbox" name="detail" data-options="multiline:true, required:true" style="height:400px; width: 800px"/></td>
+                    <td>设备资源:</td>
+                    <td>
+                        <input type="button" value="选择资源..." onclick="openResourceWin()">
+                        <input type="hidden" name="resources" id="resourcesId" value=""/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                       <div id="resourceResults">
+
+                       </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>推送类型：</td>
+                    <td>
+                        <div>
+                            <input class="easyui-checkbox" type="checkbox" name="pushType" value="image" label="图片">图片
+                        </div>
+                        <div>
+                            <input class="easyui-checkbox" type="checkbox" name="pushType" value="video" label="视频">视频
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>开始时间：</td>
+                    <td>
+                        <input class="easyui-timespinner" style="width:80px;" id="executeTime" value="00:00:00"
+                               required="required" data-options="showSeconds:true">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>持续时长：</td>
+                    <td>
+                        <input type="text" id="durationTime" class="easyui-numberbox" value="10" data-options="max:300">秒
+                    </td>
                 </tr>
             </table>
         </form>
@@ -48,6 +77,9 @@
      data-options="iconCls:'icon-save',modal:true,closed:true">
 </div>
 
+<div id="resourceWin" class="easyui-window" title="选择设备资源" style="width:800px;height:600px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+</div>
         <script>
             $(document).ready(function() {
                 $("#taskSelect").combobox({
@@ -85,6 +117,11 @@
             function openCronWin() {
                 $("#cronWin").window("open");
                 $('#cronWin').window('refresh', '/html/task/cron.html');
+            }
+
+            function openResourceWin() {
+                $("#resourceWin").window("open");
+                $('#resourceWin').window('refresh', '/html/device/device-select.html');
             }
 
             function openLateTimes() {

@@ -1,5 +1,6 @@
 package com.power.wechatpush.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.power.wechatpush.video.Device;
 import com.power.wechatpush.video.Resource;
 
@@ -16,6 +17,8 @@ public class DevicePo {
     private int index;
     private int usable;
     private String description;
+
+    @JsonProperty("_parentId")
     private Long parentId;
 
     private List<DevicePo> children;

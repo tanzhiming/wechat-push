@@ -10,6 +10,8 @@ import com.power.wechatpush.wechat.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class WxUserController {
@@ -27,6 +29,12 @@ public class WxUserController {
                                  @RequestParam(name="rows", required = true) Integer rows) {
         return wxUserService.getPageForUser(page, rows);
     }
+
+    @GetMapping("/getUsers")
+    public List<WxUser> getUsers() {
+        return wxUserService.getPageForUser(1, 1000).getRows();
+    }
+
 
     @PutMapping("/remark")
     public boolean updateRemark(@RequestParam(name="openid", required = true) String openid,
