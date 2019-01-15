@@ -11,12 +11,12 @@
             <table cellpadding="5" width="100%">
                 <tr>
                     <td>任务名称:</td>
-                    <td><input class="easyui-textbox" type="text" name="name" data-options="required:true,width:500"/></td>
+                    <td><input class="easyui-textbox"  name="name" data-options="required:true,width:500"/></td>
                 </tr>
                 <tr>
                     <td>微信用户:</td>
                     <td>
-                        <input class="easyui-combobox" name="user"
+                        <input class="easyui-combobox" name="user" id="tp-user"
                                data-options="method: 'get',multiple:true,valueField:'openid',textField:'name',url:'user/getUsers', width:500">
                     </td>
                 </tr>
@@ -42,10 +42,10 @@
                     <td>推送类型：</td>
                     <td>
                         <div>
-                            <input class="easyui-checkbox" type="checkbox" name="pushType" value="image" label="图片">图片
+                            <input class="easyui-checkbox" type="checkbox" name="pushType" id="tp-pushType1" value="image" label="图片">图片
                         </div>
                         <div>
-                            <input class="easyui-checkbox" type="checkbox" name="pushType" value="video" label="视频">视频
+                            <input class="easyui-checkbox" type="checkbox" name="pushType" id="tp-pushType2" value="video" label="视频">视频
                         </div>
                     </td>
                 </tr>
@@ -53,7 +53,7 @@
                 <tr>
                     <td>开始时间：</td>
                     <td>
-                        <input class="easyui-timespinner" style="width:80px;" id="executeTime" value="00:00:00"
+                        <input class="easyui-timespinner" style="width:80px;" id="tp-executeTime" value="00:00:00"
                                required="required" data-options="showSeconds:true">
                     </td>
                 </tr>
@@ -97,6 +97,53 @@
             function saveTask() {
                 $("#taskForm").form("submit", {
                     url: 'task',
+                    onSubmit: function(param) {
+                        param.type = 2;
+                        var hours = $("#tp-executeTime").timespinner("getHours");
+                        var minutes = $("#tp-executeTime").timespinner("getMinutes");
+                        var seconds = $("#tp-executeTime").timespinner("getSeconds");
+                        param.cronExpress = seconds + " " + minutes + " " + hours + " * * ?";
+
+                        var openids = $("#tp-user").combobox("getValues");
+                        if (!openids || openids.length == 0) {
+                            alert("请选择用户");
+                            return false;
+                        }
+                        var resourceIds = JSON.parse($("#resourcesId").val());
+                        if (!resourceIds || resourceIds.length == 0) {
+                            alert("请选择设备");
+                            return false;
+                        }
+                        var  pushTypes = $('input:checkbox[name="pushType"]:checked');
+                        if (!pushTypes) {
+                            alert("请选择推送类型");
+                            return false;
+                        }
+
+                        var duration = $('#durationTime').numberbox('getValue');
+
+
+                        var pushTypeArr = [];
+                        pushTypes.each(function() {
+                            pushTypeArr.push($(this).val());
+                        });
+
+                        var detail = {
+                            users: openids,
+                            deviceResource: resourceIds,
+                            pushType: pushTypeArr,
+                            startTime: {
+                                hours: hours,
+                                minutes: minutes,
+                                seconds: seconds
+                            }
+                        };
+                        if (duration) {
+                            detail.duration = duration;
+                        }
+                        param.detail = JSON.stringify(detail);
+                        alert( param.detail);
+                    },
                     success: function(result) {
                         $.messager.show(
                             {

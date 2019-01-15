@@ -56,7 +56,7 @@
                 return;
             }
 
-            var resourcesId = "";
+            var resourcesId = '[';
             var resourceResults = "";
             for (var i = 0; i < selectNodes.length; i++) {
                 var node = selectNodes[i];
@@ -66,12 +66,13 @@
                 }
                 var parentNode =  $('#device-tree-grid').treegrid("getParent", node.id);
                 console.log(parentNode);
-                resourcesId += node.puid + "|" + node.index;
+                resourcesId += '{ "puid": "'+ node.puid + '", "index": ' + node.index + ' }';
                 resourceResults += "<li>设备:" + parentNode.name + ", 资源: " + node.name + "</li>";
                 if (i < selectNodes.length - 1) {
                     resourcesId += ","
                 }
             }
+            resourcesId += ']';
             $("#resourcesId").val(resourcesId);
             $("#resourceResults").html("<ul>"+ resourceResults + "</ul>");
             $("#resourceWin").window("close");
