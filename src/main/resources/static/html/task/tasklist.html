@@ -18,60 +18,18 @@
         <thead>
         <tr>
             <th data-options="field:'name', width: '100px'">名称</th>
-            <th data-options="field:'type',width: '100px', formatter: convTaskType">类型</th>
-            <th data-options="field:'cronExpress',width: '100px'">cron表达式</th>
-            <th data-options="field:'detail',width: '100px', formatter: editTask">操作</th>
+            <!--<th data-options="field:'type',width: '100px', formatter: convTaskType">类型</th>-->
+            <!--<th data-options="field:'cronExpress',width: '100px'">cron表达式</th>-->
+            <th data-options="field:'userNames',width: '100px'">用户</th>
+            <th data-options="field:'pushType',width: '100px'">推送类型</th>
+            <th data-options="field:'startTime',width: '100px'">开始时间</th>
+            <th data-options="field:'duration',width: '100px'">持续时间</th>
+            <th data-options="field:'id',width: '100px', formatter: editTask">操作</th>
         </tr>
         </thead>
     </table>
 
-
-    <div id="taskWin" class="easyui-window" title="My Window" closed="true" style="width:800px;height:600px;padding:5px;">
-        <table cellpadding="5" width="100%">
-            <tr>
-                <td width="100px">任务名称:</td>
-                <td id="taskName"></td>
-            </tr>
-            <tr>
-                <td>任务类型:</td>
-                <td id="taskType"></td>
-            </tr>
-            <tr id="cronTr" style="visibility: hidden">
-                <td>cron表达式:</td>
-                <td id="cronExpress"></td>
-            </tr>
-            <tr>
-                <td>任务内容:</td>
-                <td>
-                    <textarea id="taskDetail" style="width: 100%; height: 400px"></textarea>
-                </td>
-            </tr>
-        </table>
-    </div>
-
     <script>
-
-        function openTaskWin(id) {
-            $("#taskName").html("");
-            $("#taskType").html("");
-            $("#cronExpress").html("");
-            $("#taskDetail").html("");
-
-            $.get("/task/" + id).then(function(task) {
-                $("#taskName").html(task.name);
-
-                if (task.type == 1) {
-                    $("#cronTr").css("visibility", "hidden");
-                    $("#taskType").html("手工任务");
-                } else if (task.type == 2) {
-                    $("#taskType").html("定时任务");
-                    $("#cronTr").css("visibility", "visible");
-                    $("#cronExpress").html(task.cronExpress);
-                }
-                $("#taskDetail").html(task.detail);
-                $("#taskWin").window('open');
-            });
-        }
 
 
         function reloadTask() {
@@ -80,13 +38,24 @@
 
         function editTask(value, row, index) {
             var html = '<div id="toolbar">';
-            html = html + '<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="executeTask('+row.id+');">执行任务</a>&nbsp';
+            // html = html + '<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="executeTask('+row.id+');">执行任务</a>&nbsp';
             html = html + '<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="openPage(\'编辑任务\', \'/task/toEditTask/'+ row.id +'\')">编辑任务</a>&nbsp';
             html = html + '<a href="#"  class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteTask('+row.id+');">删除</a>&nbsp;';
-            html = html + '<a href="#"  class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="openTaskWin('+row.id + ');">详情</a>&nbsp;';
             html = html+ '</div>';
             return html;
         }
+
+        function getUserFromDetail(value, row, index) {
+            var detailJson = JSON.parse(value);
+            return detailJson.users.join(",");
+        }
+
+        function getPushTypeFromDetail(value, row, index) {
+            var detailJson = JSON.parse(value);
+            return detailJson.pushType.join(",");
+        }
+
+
 
         function deleteTask(id) {
 

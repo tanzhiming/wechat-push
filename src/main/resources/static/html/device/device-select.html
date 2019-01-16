@@ -66,7 +66,7 @@
                 }
                 var parentNode =  $('#device-tree-grid').treegrid("getParent", node.id);
                 console.log(parentNode);
-                resourcesId += '{ "puid": "'+ node.puid + '", "index": ' + node.index + ' }';
+                resourcesId += '{ "puid": "'+ node.puid + '", "index": ' + node.index + ', "devName": "' + parentNode.name + '", "resName": "' +  node.name +'" }';
                 resourceResults += "<li>设备:" + parentNode.name + ", 资源: " + node.name + "</li>";
                 if (i < selectNodes.length - 1) {
                     resourcesId += ","

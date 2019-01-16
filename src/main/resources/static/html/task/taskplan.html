@@ -37,7 +37,6 @@
                        </div>
                     </td>
                 </tr>
-
                 <tr>
                     <td>推送类型：</td>
                     <td>
@@ -72,28 +71,10 @@
     </div>
 </div>
 
-
-<div id="cronWin" class="easyui-window" title="Cron 表达式" style="width:600px;height:400px"
-     data-options="iconCls:'icon-save',modal:true,closed:true">
-</div>
-
 <div id="resourceWin" class="easyui-window" title="选择设备资源" style="width:800px;height:600px"
      data-options="iconCls:'icon-save',modal:true,closed:true">
 </div>
         <script>
-            $(document).ready(function() {
-                $("#taskSelect").combobox({
-                    onSelect: function(obj) {
-                        if (obj.value == "1") {
-                            $("#cronTr").css("visibility", "hidden")
-                        } else {
-                            $("#cronTr").css("visibility", "visible")
-                        }
-                    }
-                })
-
-            });
-
             function saveTask() {
                 $("#taskForm").form("submit", {
                     url: 'task',
@@ -127,9 +108,10 @@
                         pushTypes.each(function() {
                             pushTypeArr.push($(this).val());
                         });
-
+                        var userNames = $("#tp-user").combobox("getText");
                         var detail = {
                             users: openids,
+                            userNames: userNames,
                             deviceResource: resourceIds,
                             pushType: pushTypeArr,
                             startTime: {
@@ -139,10 +121,9 @@
                             }
                         };
                         if (duration) {
-                            detail.duration = duration;
+                            detail.duration = parseInt(duration);
                         }
                         param.detail = JSON.stringify(detail);
-                        alert( param.detail);
                     },
                     success: function(result) {
                         $.messager.show(
@@ -161,31 +142,11 @@
                 })
             }
 
-            function openCronWin() {
-                $("#cronWin").window("open");
-                $('#cronWin').window('refresh', '/html/task/cron.html');
-            }
+
 
             function openResourceWin() {
                 $("#resourceWin").window("open");
                 $('#resourceWin').window('refresh', '/html/device/device-select.html');
-            }
-
-            function openLateTimes() {
-
-                var cron = $("#cronExpress").textbox("getValue");
-                if (!cron) {
-                    return;
-                }
-                $.get("/task/lateFireTimes", {cronExpress: cron}).then(function(datas) {
-                    var text = "";
-                    if (datas && datas.length > 0) {
-                        for (var i = 0; i < datas.length; i++) {
-                            text += datas[i]+"<br/>";
-                        }
-                    }
-                    $.messager.alert("最近几次执行时间", text);
-                });
             }
 
         </script>

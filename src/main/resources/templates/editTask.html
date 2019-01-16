@@ -1,38 +1,67 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<div class="easyui-panel" title="" style="width:100%">
+<div class="easyui-panel" title="" style="width:100%" >
     <div style="padding:10px 60px 20px 60px">
         <form id="taskForm" method="post">
-            <table cellpadding="5">
+            <table cellpadding="5" width="100%">
                 <tr>
                     <td>任务名称:</td>
-                    <td><input class="easyui-textbox" type="text" name="name" data-options="required:true" th:value="${task.name}"/></td>
+                    <td><input class="easyui-textbox"  name="name" data-options="required:true,width:500" th:value="${task.name}" /></td>
                 </tr>
                 <tr>
-                    <td>任务类型:</td>
+                    <td>微信用户:</td>
                     <td>
-                        <select id="taskSelect" class="easyui-combobox" name="type" onchange="onChangeType();" style="cursor: pointer">
-                            <option value="1">手动任务</option>
-                            <option value="2">定时任务</option>
-                        </select>
+                        <input class="easyui-combobox" name="user" id="tp-user"
+                               data-options="method: 'get',multiple:true,valueField:'openid',textField:'name',url:'user/getUsers', width:500, onLoadSuccess: selectUser">
                     </td>
                 </tr>
-                <tr id="cronTr" style="visibility: hidden">
-                    <td>cron表达式:</td>
+
+                <tr>
+                    <td>设备资源:</td>
                     <td>
-                        <input class="easyui-textbox" type="text" id="cronExpress" name="cronExpress" th:value="${task.cronExpress}"/>
-                        <input type="button" value="..." onclick="openCronWin()">
-                        <a href="javascript:openLateTimes()">最近几次执行时间</a>
+                        <input type="button" value="选择资源..." onclick="openResourceWin()">
+                        <input type="hidden" name="resources" id="resourcesId" value=""/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <div id="resourceResults">
+
+                        </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>任务内容:</td>
-                    <td><textarea class="easyui-textbox" name="detail" data-options="multiline:true, required:true" style="height:400px; width: 800px" th:text="${task.detail}"/></td>
+                    <td>推送类型：</td>
+                    <td>
+                        <div>
+                            <input class="easyui-checkbox" type="checkbox" name="pushType" id="tp-pushType1" value="image" label="图片">图片
+                        </div>
+                        <div>
+                            <input class="easyui-checkbox" type="checkbox" name="pushType" id="tp-pushType2" value="video" label="视频">视频
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>开始时间：</td>
+                    <td>
+                        <input class="easyui-timespinner" style="width:80px;" id="tp-executeTime" value="00:00:00" type="text"
+                               required="required" data-options="showSeconds:true">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>持续时长：</td>
+                    <td>
+                        <input type="text" id="durationTime" class="easyui-numberbox" value="10" data-options="max:300">秒
+                    </td>
                 </tr>
             </table>
             <input type="hidden" name="id" th:value="${task.id}">
@@ -43,79 +72,151 @@
     </div>
 </div>
 
-<div id="cronWin" class="easyui-window" title="Cron 表达式" style="width:600px;height:400px"
+<div id="resourceWin" class="easyui-window" title="选择设备资源" style="width:800px;height:600px"
      data-options="iconCls:'icon-save',modal:true,closed:true">
 </div>
 
-        <script th:inline="javascript">
+<script th:inline="javascript">
 
-            $(document).ready(function() {
+    var detailJson;
+    $(document).ready(function() {
+        var detail = [[${task.detail}]];
+        detailJson = JSON.parse(detail);
+        //$("#tp-user").combobox("setValues", detailJson.users);
+        $("#resourcesId").val(JSON.stringify(detailJson.deviceResource));
 
-                var id = [[${task.id}]];
-                var type = [[${task.type}]];
+        var resources = detailJson.deviceResource;
+        var resourceResults = "";
+        for (var i = 0; i < resources.length; i++) {
+            resourceResults += "<li>设备:" + resources[i].devName + ", 资源: " + resources[i].resName + "</li>";
+        }
+        $("#resourceResults").html("<ul>"+ resourceResults + "</ul>");
 
-                var options = $("#taskSelect").find("option");
-                for (var i = 0; i < options.length; i++) {
-                    if ($(options[i]).val() == type) {
-                        $(options[i]).attr("selected", "selected");
-                    }
+
+        $('input:checkbox[name="pushType"]').each(function() {
+            for (var i = 0; i < detailJson.pushType.length; i++ ) {
+                if (detailJson.pushType[i] == $(this).val()) {
+                    $(this).attr("checked", true);
+                }
+            }
+        });
+
+        setStartTime();
+
+        setDuration();
+
+    });
+
+    function setStartTime(){
+        if (detailJson.startTime) {
+            var hours = detailJson.startTime.hours;
+            var minutes =detailJson.startTime.minutes;
+            var seconds = detailJson.startTime.seconds;
+
+            if (hours < 10) {
+                hours = "0" + hours;
+            }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            var time = hours + ":" + minutes + ":" + seconds;
+            $("#tp-executeTime").val(time);
+        }
+    }
+
+    function setDuration() {
+        if (detailJson.duration) {
+            $('#durationTime').val(detailJson.duration);
+        }
+    }
+
+
+    function formLoade() {
+        alert("formLoade");
+    }
+
+    function selectUser() {
+        $("#tp-user").combobox("setValues", detailJson.users);
+    }
+
+
+    function saveTask() {
+        $("#taskForm").form("submit", {
+            url: '/task/' + [[${task.id}]],
+            onSubmit: function(param) {
+                param.type = 2;
+                var hours = $("#tp-executeTime").timespinner("getHours");
+                var minutes = $("#tp-executeTime").timespinner("getMinutes");
+                var seconds = $("#tp-executeTime").timespinner("getSeconds");
+                param.cronExpress = seconds + " " + minutes + " " + hours + " * * ?";
+
+                var openids = $("#tp-user").combobox("getValues");
+                if (!openids || openids.length == 0) {
+                    alert("请选择用户");
+                    return false;
+                }
+                var resourceIds = JSON.parse($("#resourcesId").val());
+                if (!resourceIds || resourceIds.length == 0) {
+                    alert("请选择设备");
+                    return false;
+                }
+                var  pushTypes = $('input:checkbox[name="pushType"]:checked');
+                if (!pushTypes) {
+                    alert("请选择推送类型");
+                    return false;
                 }
 
-                $("#taskSelect").combobox({
-                    onSelect: function(obj) {
-                        if (obj.value == "1") {
-                            $("#cronTr").css("visibility", "hidden")
-                        } else {
-                            $("#cronTr").css("visibility", "visible")
-                        }
-                    }
-                })
+                var duration = $('#durationTime').numberbox('getValue');
 
-            });
 
-            function saveTask() {
-
-                $("#taskForm").form("submit", {
-                    url: '/task/' + [[${task.id}]],
-                    success: function(result) {
-                        $.messager.show(
-                            {
-                                title: '消息',
-                                msg: '编辑任务成功',
-                                showType: 'fade',
-                                style:{
-                                    right:'',
-                                    bottom:''
-                                }
-                            });
-                        $('#tab').tabs('close', "编辑任务");
-                        $("#taskGrid").datagrid('reload');
-                    }
-                })
-            }
-
-            function openCronWin() {
-                $("#cronWin").window("open");
-                $('#cronWin').window('refresh', '/html/task/cron.html');
-            }
-
-            function openLateTimes() {
-
-                var cron = $("#cronExpress").textbox("getValue");
-                if (!cron) {
-                    return;
-                }
-                $.get("/task/lateFireTimes", {cronExpress: cron}).then(function(datas) {
-                    var text = "";
-                    if (datas && datas.length > 0) {
-                        for (var i = 0; i < datas.length; i++) {
-                            text += datas[i]+"<br/>";
-                        }
-                    }
-                    $.messager.alert("最近几次执行时间", text);
+                var pushTypeArr = [];
+                pushTypes.each(function() {
+                    pushTypeArr.push($(this).val());
                 });
+                var userNames = $("#tp-user").combobox("getText");
+                var detail = {
+                    users: openids,
+                    userNames: userNames,
+                    deviceResource: resourceIds,
+                    pushType: pushTypeArr,
+                    startTime: {
+                        hours: hours,
+                        minutes: minutes,
+                        seconds: seconds
+                    }
+                };
+                if (duration) {
+                    detail.duration = parseInt(duration);
+                }
+                param.detail = JSON.stringify(detail);
+            },
+            success: function(result) {
+                $.messager.show(
+                    {
+                        title: '消息',
+                        msg: '编辑任务成功',
+                        showType: 'fade',
+                        style:{
+                            right:'',
+                            bottom:''
+                        }
+                    });
+                $('#tab').tabs('close', "编辑任务");
+                $("#taskGrid").datagrid('reload');
             }
+        })
+    }
 
-        </script>
+
+
+    function openResourceWin() {
+        $("#resourceWin").window("open");
+        $('#resourceWin').window('refresh', '/html/device/device-select.html');
+    }
+
+</script>
 </body>
 </html>
