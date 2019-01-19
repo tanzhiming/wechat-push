@@ -39,7 +39,7 @@ CREATE TABLE `tb_task` (
   PRIMARY KEY (`f_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+DROP TABLE IF EXISTS tb_task_log;
 CREATE TABLE `tb_task_log` (
   `f_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `f_task_name` varchar(60) DEFAULT NULL,
@@ -48,3 +48,16 @@ CREATE TABLE `tb_task_log` (
   `f_create_time` datetime DEFAULT NULL,
   PRIMARY KEY (`f_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS tb_media_file;
+CREATE TABLE `tb_media_file` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `batch_no` varchar(100) DEFAULT NULL,
+  `task_name` varchar(60) NOT NULL,
+  `file_type` varchar(60) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `dev_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `res_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;

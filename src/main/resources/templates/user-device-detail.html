@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>监控设备列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        body {
+            background-color: #ebebeb;
+        }
+        .dev-item {
+            background-color: #fff;
+            margin: 10px 10px;
+            padding: 10px 10px;
+            border-radius: 5px;
+        }
+        .normal-a:link {
+            text-decoration:none;
+            color:#333;
+        }
+    </style>
+</head>
+<body>
+    <div th:each="file:${mediaFiles}" class="dev-item">
+        <a th:href="${'/play/' + file.id}" class="normal-a">
+           <div>
+               <span>设备名:</span>
+               <span th:text="${file.devName}"></span>
+           </div>
+            <div>
+                <span>资源名:</span>
+                <span th:text="${file.resName}"></span>
+            </div>
+            <div>
+                <span>时间:</span>
+                <span th:text="${file.createTime}"></span>
+            </div>
+            <div>
+                <a th:href="${'/play/' + file.id}" th:if="${file.fileType == 'image'}">查看图片</a>
+                <a th:href="${'/play/' + file.id}" th:if="${file.fileType == 'video'}">查看视频</a>
+            </div>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,13 +1,16 @@
 package com.power.wechatpush.job;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.power.wechatpush.dao.entity.DevicePo;
+import com.power.wechatpush.dao.entity.MediaFile;
 import com.power.wechatpush.dao.entity.Task;
 import com.power.wechatpush.dao.entity.TaskLog;
+import com.power.wechatpush.service.MediaFileService;
 import com.power.wechatpush.service.TaskService;
+import com.power.wechatpush.service.WxUserService;
+import com.power.wechatpush.util.CommonUtil;
 import com.power.wechatpush.util.SpringUtil;
+import com.power.wechatpush.video.VideoSDK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class TaskExecutor {
@@ -32,9 +33,12 @@ public class TaskExecutor {
      public void execute(Task task) {
         String taskDetail = task.getDetail();
         TaskLogWriter logWriter = null;
+        String taskName = task.getName();
         try {
             logWriter = new TaskLogWriter();
             logWriter.write("任务执行开始");
+            MediaFileService mediaFileService = SpringUtil.getApplicationContext().getBean(MediaFileService.class);
+            WxUserService wxUserService = SpringUtil.getApplicationContext().getBean(WxUserService.class);
 
             // TODO 任务执行
             JSONObject detailObj = JSONObject.parseObject(taskDetail);
@@ -44,38 +48,69 @@ public class TaskExecutor {
             int duration = detailObj.getIntValue("duration");
             String resourceDir = SpringUtil.getApplicationContext().getEnvironment().getProperty("resource.dir");
             String address = SpringUtil.getApplicationContext().getEnvironment().getProperty("video.address");
-            String usernmae = SpringUtil.getApplicationContext().getEnvironment().getProperty("video.usernmae");
+            String username = SpringUtil.getApplicationContext().getEnvironment().getProperty("video.username");
             String password = SpringUtil.getApplicationContext().getEnvironment().getProperty("video.password");
             String epid = SpringUtil.getApplicationContext().getEnvironment().getProperty("video.epid");
+            String templateId = SpringUtil.getApplicationContext().getEnvironment().getProperty("wx.message.templateId");
+            String domain = SpringUtil.getApplicationContext().getEnvironment().getProperty("wx.my.domain");
+
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sdf.format(new Date());
             File dir = new File(resourceDir, dateStr);
+            String requestPath = "/resources/" + dateStr;
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
+            // 批次号
+            String batchNo = CommonUtil.getBatchNo();
 
             List<Future<Integer>> futures = new ArrayList<>();
-
-
-
             for (int i = 0; i < deviceResources.size(); i++) {
                 JSONObject res = deviceResources.getJSONObject(i);
                 final String puid = res.getString("puid");
                 final int index = res.getIntValue("index");
+                final String devName = res.getString("devName");
+                final String resName = res.getString("resName");
                 int isVideo = 0;
                 if (pushTypes.contains("video")) {
                     isVideo = 1;
                 }
                 final int isVideo1  = isVideo;
 
-                String filename = dir + File.separator +  puid + "-"+ index + "-" + System.currentTimeMillis();
+                String partName = puid + "-"+ index + "-" + System.currentTimeMillis();
+                String filename = dir + File.separator + partName;
+                String filename2 = requestPath + "/"+ partName;
                 futures.add(threadPoolExecutor.submit(new Callable<Integer>() {
                    @Override
                    public Integer call() throws Exception {
                        int ret = -1;
-                       ret = recordMedia(address, usernmae, password, epid, puid, index, isVideo1, duration, filename);
+                       ret = recordMedia(address, username, password, epid, puid, index, isVideo1, duration, filename);
+                       if (ret == 0) {
+                           List<MediaFile> mediaFiles = new ArrayList<>();
+                           MediaFile file = new MediaFile();
+                           file.setBatchNo(batchNo);
+                           file.setCreateTime(new Date());
+                           file.setFileType("image");
+                           file.setFileName(filename2 + ".jpg");
+                           file.setTaskName(taskName);
+                           file.setDevName(devName);
+                           file.setResName(resName);
+                           mediaFiles.add(file);
+                           if (isVideo1 == 1) {
+                              file = new MediaFile();
+                               file.setBatchNo(batchNo);
+                               file.setCreateTime(new Date());
+                               file.setFileType("video");
+                               file.setFileName(filename2 + ".mp4");
+                               file.setTaskName(taskName);
+                               file.setDevName(devName);
+                               file.setResName(resName);
+                               mediaFiles.add(file);
+                           }
+                           mediaFileService.saveMediaFiles(mediaFiles);
+                       }
                        return ret;
                    }
                 }));
@@ -96,7 +131,12 @@ public class TaskExecutor {
             // 微信推送给用户
             for (int i = 0; i < users.size(); i++) {
                 String openid = users.getString(i);
-                System.out.println("wechat push openid: " + openid);
+                System.out.println("wechat push openid: " + openid + ", batchNo: " + batchNo);
+                String url = domain + "/user-device-detail/" + batchNo;
+                Map<String, Object> data = new HashMap<>();
+                data.put("taskNo", task.getName());
+                data.put("triggerTime", "2019-01-19");
+                wxUserService.sendTemplateMessage(openid, templateId, url, data);
             }
 
             logWriter.write("任务执行成功");
@@ -117,6 +157,10 @@ public class TaskExecutor {
                             int index, int isVideo,int duration, String filename) {
         System.out.printf("recordMedia ---- address: %s, username: %s, password: %s, epid: %s, puid: %s, index: %d, isVideo: %d, filename:%s\n",
                 address, username, password, epid, puid, index, isVideo, filename);
+        if (password == null) {
+            password = "";
+        }
+        VideoSDK.recordMedia(address, username, password, epid, puid, index, isVideo, duration, filename);
         return 0;
     }
 

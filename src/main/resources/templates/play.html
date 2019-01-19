@@ -1,0 +1,68 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>播放</title>
+    <style>
+        body{
+            margin: 0;
+            background: wheat;
+        }
+        .player{
+            width: 100%;
+            height: 300px;   //有的安卓浏览器不支持vw，使用px优雅降级
+        height: 56.25vw; // 16:9
+        position: relative;
+        }
+        .player .video{
+            width: 100%;
+            height: 100%;
+            object-position: center top;
+        }
+        .content{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div>
+
+    <div th:if="${mediaFile.fileType == 'image'}">
+        <img th:src="${mediaFile.fileName}" width="100%">
+    </div>
+    <div class="player" th:if="${mediaFile.fileType == 'video'}" >
+        <video id="video"
+               class="video"
+               width="1" height="1"
+               preload="auto"
+               style="object-fit:contain;height:300px;height: 56.25vw;"
+               webkit-playsinline="true"
+               playsinline
+               x5-video-player-type="h5"
+               x5-video-player-fullscreen="true"
+               x5-video-orientation="portraint"
+               controls
+               autoplay
+               th:poster="${mediaFile.fileName.substring(0, mediaFile.fileName.length()-3) + 'jpg'}">
+            <source th:src="${mediaFile.fileName}" type="video/mp4">
+        </video>
+    </div>
+    <!--<div class="content">-->
+        <!--<p>hello content</p>-->
+        <!--<button onclick="document.getElementById('video').play();">play</button>-->
+    <!--</div>-->
+</div>
+<script>
+    var myPlayer = document.getElementById('video');
+    myPlayer.addEventListener('x5videoenterfullscreen',function(){
+        myPlayer.style.width = window.screen.width + 'px';
+        myPlayer.style.height = window.screen.height + 'px';
+    });
+    myPlayer.addEventListener('x5videoexitfullscreen',function(){
+        myPlayer.style.width = myPlayer.style.height = "";
+    },false);
+</script>
+
+</body>
+</html>

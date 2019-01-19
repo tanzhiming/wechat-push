@@ -1,5 +1,6 @@
 package com.power.wechatpush.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.power.wechatpush.dao.WxUserDao;
 import com.power.wechatpush.dao.entity.WxUser;
 import com.power.wechatpush.util.Page;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WxUserService {
@@ -44,10 +46,25 @@ public class WxUserService {
     }
 
 
-    public void sendTemplateMessage(String openid, String tempalteContentJson) {
+    public void sendTemplateMessage(String openid, String templateId, String url, Map<String, Object> data) {
         String accessToken = accessTokenService.getAccessToken().getAccessToken();
         String requestUrl = String.format(TEMPLATE_MESSAGE, accessToken);
-
-        HttpUtil.doPostJson(requestUrl, "");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("touser", openid);
+        jsonObject.put("template_id", templateId);
+        jsonObject.put("topcolor", "#FF0000");
+        jsonObject.put("url", url);
+        if (data != null) {
+            JSONObject jsonData = new JSONObject();
+            JSONObject jsonValue = null;
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                jsonValue = new JSONObject();
+                jsonValue.put("value", entry.getValue());
+                jsonValue.put("color", "#173177");
+                jsonData.put(entry.getKey(), jsonValue);
+            }
+            jsonObject.put("data", jsonData);
+        }
+        HttpUtil.doPostJson(requestUrl, jsonObject.toJSONString());
     }
 }
