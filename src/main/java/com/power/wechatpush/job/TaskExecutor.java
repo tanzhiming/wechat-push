@@ -20,15 +20,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class TaskExecutor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TaskExecutor.class);
-
-    private ThreadPoolExecutor threadPoolExecutor =  new ThreadPoolExecutor(5, 5,
-            0L,TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-
+     private static final Logger LOG = LoggerFactory.getLogger(TaskExecutor.class);
 
      public void execute(Task task) {
         String taskDetail = task.getDetail();
@@ -39,6 +37,8 @@ public class TaskExecutor {
             logWriter.write("任务执行开始");
             MediaFileService mediaFileService = SpringUtil.getApplicationContext().getBean(MediaFileService.class);
             WxUserService wxUserService = SpringUtil.getApplicationContext().getBean(WxUserService.class);
+            TaskExecutorService taskExecutorService = SpringUtil.getApplicationContext().getBean(TaskExecutorService.class);
+
 
             // TODO 任务执行
             JSONObject detailObj = JSONObject.parseObject(taskDetail);
@@ -82,11 +82,12 @@ public class TaskExecutor {
                 String partName = puid + "-"+ index + "-" + System.currentTimeMillis();
                 String filename = dir + File.separator + partName;
                 String filename2 = requestPath + "/"+ partName;
-                futures.add(threadPoolExecutor.submit(new Callable<Integer>() {
+                futures.add(taskExecutorService.submit(new Callable<Integer>() {
                    @Override
                    public Integer call() throws Exception {
                        int ret = -1;
-                       ret = recordMedia(address, username, password, epid, puid, index, isVideo1, duration, filename);
+
+                       ret = recordMedia(taskExecutorService.getSesson(), puid, index, isVideo1, duration, filename);
                        if (ret == 0) {
                            List<MediaFile> mediaFiles = new ArrayList<>();
                            MediaFile file = new MediaFile();
@@ -153,14 +154,8 @@ public class TaskExecutor {
         taskService.insertTaskLog(taskLog);
     }
 
-    private int recordMedia(String address, String username, String password, String epid, String puid,
-                            int index, int isVideo,int duration, String filename) {
-        System.out.printf("recordMedia ---- address: %s, username: %s, password: %s, epid: %s, puid: %s, index: %d, isVideo: %d, filename:%s\n",
-                address, username, password, epid, puid, index, isVideo, filename);
-        if (password == null) {
-            password = "";
-        }
-        VideoSDK.recordMedia(address, username, password, epid, puid, index, isVideo, duration, filename);
+    private int recordMedia(long session,String puid, int index, int isVideo,int duration, String filename) {
+        VideoSDK.recordMedia(session, puid, index, isVideo, duration, filename);
         return 0;
     }
 
