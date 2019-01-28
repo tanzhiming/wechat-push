@@ -9,6 +9,8 @@ import com.power.wechatpush.wechat.util.MessageUtil;
 import com.power.wechatpush.wechat.util.SignUtil;
 import com.power.wechatpush.wechat.util.XmlUtil;
 import org.dom4j.DocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/wx")
 public class WxController {
+
+    private static Logger LOG = LoggerFactory.getLogger(WxController.class);
 
     @Value("${wx.token}")
     private String token;
@@ -43,6 +47,7 @@ public class WxController {
     @GetMapping(produces = {"text/plain;charset=UTF-8"})
     public String wxCheck(@RequestParam("signature") String signature, @RequestParam("timestamp") String timestamp, @RequestParam("nonce") String nonce, @RequestParam("echostr") String echostr) {
         boolean b = SignUtil.checkSigature(signature, token, timestamp, nonce);
+        LOG.info("微信回调检测！{}", b);
         return b ? echostr : "微信签名验证失败";
     }
 

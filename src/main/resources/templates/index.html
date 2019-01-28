@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>微信推送</title>
+    <title>可视化超清视频管控平台</title>
     <link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="css/report.css">
@@ -12,11 +12,11 @@
 </head>
 <body class="easyui-layout">
     <div data-options="region:'north',title:false, split:true" style="height:100px;">
-        <div class="logo">微信推送</div>
+        <div class="logo">可视化超清视频管控平台</div>
         <div class="loginInfo">
             <ul>
-                <!--<li th:text=""></li>-->
-                <!--<li><a href="javascript:exitSystem();">退出</a></li>-->
+                <li th:text="${session.userSession.name }"></li>
+                <li><a href="javascript:exitSystem();">退出</a></li>
             </ul>
         </div>
     </div>

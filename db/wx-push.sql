@@ -61,3 +61,12 @@ CREATE TABLE `tb_media_file` (
   `res_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS tb_staff;
+CREATE TABLE `tb_staff` (
+  `f_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `f_name` varchar(60) NOT NULL,
+  `f_password` varchar(200) DEFAULT NULL,
+  `f_status` int(11) NOT NULL,
+  PRIMARY KEY (`f_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -36,7 +36,7 @@ public class WxUserController {
     }
 
 
-    @PutMapping("/remark")
+    @PostMapping("/remark")
     public boolean updateRemark(@RequestParam(name="openid", required = true) String openid,
                                 @RequestParam(name="remark", required = true) String remark) {
 
