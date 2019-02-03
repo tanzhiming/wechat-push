@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <td>报警图片:</td>
-                    <td> <input class="easyui-filebox" name="file" style="width:300px"></td>
+                    <td> <input class="easyui-filebox" name="file" id="alarm-file" style="width:300px" data-options="buttonText: '选择文件'"></td>
                 </tr>
             </table>
         </form>
@@ -59,9 +59,19 @@
                             alert("请选择用户");
                             return false;
                         }
+
+                        if (!$("#resourcesId-alarm").val()) {
+                            alert("请选择设备");
+                            return false;
+                        }
                         var resourceIds = JSON.parse($("#resourcesId-alarm").val());
                         if (!resourceIds || resourceIds.length == 0) {
                             alert("请选择设备");
+                            return false;
+                        }
+
+                        if (!$("#alarm-file").filebox("getValue")) {
+                            alert("请选择文件");
                             return false;
                         }
 
@@ -75,6 +85,11 @@
                     },
                     success: function(result) {
 
+                        $("#tp-user").combobox("setValues", []);
+                        $("#resourcesId-alarm").val(null);
+                        $("#resourceResults-alarm").html("");
+                        $("#alarm-file").filebox("clear");
+
                         $.messager.show(
                             {
                                 title: '消息',
@@ -85,8 +100,8 @@
                                     bottom:''
                                 }
                             });
-/*                        $('#tab').tabs('close', "添加任务");
-                        $("#taskGrid").datagrid('reload');*/
+                        /*                        $('#tab').tabs('close', "添加任务");
+                                                $("#taskGrid").datagrid('reload');*/
                     }
                 })
             }

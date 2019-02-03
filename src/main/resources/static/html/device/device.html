@@ -13,6 +13,11 @@
         <a href="javascript:void(0)" class="easyui-linkbutton" onclick="buildDevice()" id="build-device-btn">构建设备列表</a>
     </div>
     <table id="device-tree-grid"></table>
+
+    <div id="default-settings" class="easyui-window" title="设置默认图片和视频" style="width:400px;height:200px"
+         data-options="iconCls:'icon-save',modal:true,closed:true">
+    </div>
+
     <script>
         $('#device-tree-grid').treegrid({
             url: 'device/list',
@@ -27,8 +32,9 @@
             columns:[[
                 {field:'puid',title:'PUID',width:'300',align:'left'},
                 {field:'name',title:'名称',width:'300',align:'left'},
-                {field:'type',title:'资源类型',width:'300',align:'left'},
-                {field:'usable',title:'是否在线',width:'300', align:'left', formatter: formatOnline}
+                {field:'type',title:'资源类型',width:'200',align:'left'},
+                {field:'usable',title:'是否在线',width:'200', align:'left', formatter: formatOnline},
+                {field:'id',title:'操作',width:'200', align:'left', formatter: settings}
             ]]
         });
 
@@ -56,6 +62,24 @@
             } else if (value == 0) {
                 return "离线";
             }
+        }
+
+        function settings(value, row, index) {
+
+            if (row.type == 'IV') {
+                var html = '<div id="toolbar">';
+                html = html + '<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="defaultSetting('+row.id+');">设置默认图片和视频</a>';
+                html = html+ '</div>';
+                return html;
+            }
+            return "";
+        }
+
+        var defaultDeviceId;
+        function defaultSetting(id) {
+            defaultDeviceId = id;
+            $("#default-settings").window('open');
+            $("#default-settings").window('refresh', "/html/device/default-settings.html");
         }
 
     </script>

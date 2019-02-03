@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div style="margin: 10px 0">
+        <form  id="default-settings-form" method="post" enctype="multipart/form-data">
+            <table cellpadding="5" width="100%">
+                <tr>
+                    <td>图片:</td>
+                    <td>
+                        <input class="easyui-filebox" name="image-file" id="image-file" style="width:300px" data-options="buttonText: '选择文件'">
+                    </td>
+                </tr>
+                <tr>
+                    <td>视频:</td>
+                    <td>
+                        <input class="easyui-filebox" name="video-file" id="video-file" style="width:300px" data-options="buttonText: '选择文件'">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveDefaultSettings()">保存</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick=" $('#default-settings').window('close')">关闭</a>
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+    </div>
+
+    <script>
+        function saveDefaultSettings() {
+            $("#default-settings-form").form("submit", {
+                url: 'device/default-image-and-video',
+                onSubmit: function(param) {
+
+                    if (!$("#image-file").filebox("getValue")) {
+                        alert("请选择默认图片文件");
+                        return false;
+                    }
+                    if (!$("#video-file").filebox("getValue")) {
+                        alert("请选择默认视频文件");
+                        return false;
+                    }
+                    param.id = defaultDeviceId;
+                },
+                success: function(result) {
+                    $.messager.show(
+                        {
+                            title: '消息',
+                            msg: '设置默认图片和视频成功',
+                            showType: 'fade',
+                            style:{
+                                right:'',
+                                bottom:''
+                            }
+                        });
+                    $("#default-settings").window('close');
+                }
+            })
+        }
+
+    </script>
+</body>
+</html>

@@ -40,6 +40,17 @@ public class DeviceDao {
         jdbcTemplate.update(sql, new HashMap<>());
     }
 
+    public DevicePo getDeviceById(Long id) {
+        String sql = "select id, puid, name, type, `index`, usable, description, parent_id from tb_device where id=:id";
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        List<DevicePo> devicePos = jdbcTemplate.query(sql, param, new BeanPropertyRowMapper(DevicePo.class));
+        if (devicePos != null && devicePos.size() > 0) {
+            return devicePos.get(0);
+        }
+        return null;
+    }
+
     public List<DevicePo> queryDevices(String name, String type, Long parentId, int start, int maxResults, boolean excludeNoExistsChild) {
         StringBuilder sql = new StringBuilder("select id, puid, name, type, `index`, usable, description, parent_id from tb_device t where 1=1");
         Map<String, Object> param = new HashMap<>();

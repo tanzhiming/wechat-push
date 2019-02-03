@@ -85,4 +85,8 @@ public class DeviceService {
         return Page.create(count, deviceList);
     }
 
+    public DevicePo getDeviceById(Long id) {
+        return deviceDao.getDeviceById(id);
+    }
+
 }
