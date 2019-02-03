@@ -38,6 +38,7 @@
             <div>
                 <a th:href="${'/play/' + file.id}" th:if="${file.fileType == 'image'}">查看图片</a>
                 <a th:href="${'/play/' + file.id}" th:if="${file.fileType == 'video'}">查看视频</a>
+                <a th:href="${'/play/' + file.id}" th:if="${file.fileType == 'alarm'}">查看报警图片</a>
             </div>
         </a>
     </div>

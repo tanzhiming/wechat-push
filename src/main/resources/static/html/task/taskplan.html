@@ -69,11 +69,13 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveTask()">保存</a>
         </div>
     </div>
+
+    <div id="resourceWin" class="easyui-window" title="选择设备资源" style="width:800px;height:600px"
+         data-options="iconCls:'icon-save',modal:true,closed:true">
+    </div>
 </div>
 
-<div id="resourceWin" class="easyui-window" title="选择设备资源" style="width:800px;height:600px"
-     data-options="iconCls:'icon-save',modal:true,closed:true">
-</div>
+
         <script>
             function saveTask() {
                 $("#taskForm").form("submit", {

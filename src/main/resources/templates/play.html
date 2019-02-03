@@ -28,7 +28,12 @@
 <body>
 <div>
 
-    <div th:if="${mediaFile.fileType == 'image'}">
+    <div style="text-align: center; margin: 10px 0">
+        <span>设备名: </span><span th:text="${mediaFile.devName}"></span>&nbsp;&nbsp;
+        <span>资源名:</span><span th:text="${mediaFile.resName}"></span>
+    </div>
+
+    <div th:if="${mediaFile.fileType == 'image' || mediaFile.fileType == 'alarm'}">
         <img th:src="${mediaFile.fileName}" width="100%">
     </div>
     <div class="player" th:if="${mediaFile.fileType == 'video'}" >

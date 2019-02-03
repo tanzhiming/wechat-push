@@ -70,3 +70,12 @@ CREATE TABLE `tb_staff` (
   `f_status` int(11) NOT NULL,
   PRIMARY KEY (`f_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS tb_user_file;
+CREATE TABLE `tb_user_file` (
+  ` id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `open_id` varchar(100) NOT NULL,
+  `media_batch_no` varchar(100) NOT NULL,
+  PRIMARY KEY (` id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

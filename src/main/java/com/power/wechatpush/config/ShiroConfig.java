@@ -64,6 +64,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/js/**","anon");
         filterChainDefinitionMap.put("/img/**","anon");
         filterChainDefinitionMap.put("/font-awesome/**","anon");
+        filterChainDefinitionMap.put("/user-device-detail/**", "anon");
+        filterChainDefinitionMap.put("/play/**", "anon");
+        filterChainDefinitionMap.put("/resources/**", "anon");
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

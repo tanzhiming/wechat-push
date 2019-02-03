@@ -129,14 +129,16 @@ public class TaskExecutor {
                 throw new RuntimeException("设备录制失败");
             }
 
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             // 微信推送给用户
             for (int i = 0; i < users.size(); i++) {
                 String openid = users.getString(i);
+                wxUserService.saveUserMediaFile(openid, batchNo);
                 System.out.println("wechat push openid: " + openid + ", batchNo: " + batchNo);
                 String url = domain + "/user-device-detail/" + batchNo;
                 Map<String, Object> data = new HashMap<>();
                 data.put("taskNo", task.getName());
-                data.put("triggerTime", "2019-01-19");
+                data.put("triggerTime", sdf1.format(new Date()));
                 wxUserService.sendTemplateMessage(openid, templateId, url, data);
             }
 

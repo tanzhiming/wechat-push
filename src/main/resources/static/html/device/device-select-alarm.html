@@ -12,12 +12,12 @@
         <a href="javascript:void(0)" class="easyui-linkbutton" onclick="query()" data-options="iconCls:'icon-search'">查询</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" onclick="deviceSelected()" data-options="iconCls:'icon-save'">确定</a>
     </div>
-    <table id="device-tree-grid"></table>
+    <table id="device-tree-grid-alarm"></table>
 
 
     <script>
 
-        $('#device-tree-grid').treegrid({
+        $('#device-tree-grid-alarm').treegrid({
             url: 'device/list',
             queryParams: {
                 name: ''
@@ -26,7 +26,8 @@
             idField:'id',
             treeField:'name',
             pagination: true,
-            singleSelect: false,
+            singleSelect: true,
+            singleSelect: true,
             height: 500,
             columns:[[
                 {field:'id',title:'ID',checkbox: true},
@@ -38,7 +39,7 @@
         });
         function query() {
             var name = $('#device-name').textbox("getValue");
-            $('#device-tree-grid').treegrid("reload", {name: name});
+            $('#device-tree-grid-alarm').treegrid("reload", {name: name});
         }
 
         function formatOnline(value, row, index) {
@@ -50,7 +51,7 @@
         }
         function deviceSelected() {
 
-            var selectNodes = $('#device-tree-grid').treegrid("getSelections");
+            var selectNodes = $('#device-tree-grid-alarm').treegrid("getSelections");
             if (!selectNodes || selectNodes.length == 0) {
                 alert("请选择设备资源");
                 return;
@@ -64,7 +65,7 @@
                 if (node.type == 'SELF') {
                     continue;
                 }
-                var parentNode =  $('#device-tree-grid').treegrid("getParent", node.id);
+                var parentNode =  $('#device-tree-grid-alarm').treegrid("getParent", node.id);
                 console.log(parentNode);
                 resourcesId += '{ "puid": "'+ node.puid + '", "index": ' + node.index + ', "devName": "' + parentNode.name + '", "resName": "' +  node.name +'" }';
                 resourceResults += "<li>设备:" + parentNode.name + ", 资源: " + node.name + "</li>";
@@ -73,9 +74,9 @@
                 }
             }
             resourcesId += ']';
-            $("#resourcesId").val(resourcesId);
-            $("#resourceResults").html("<ul>"+ resourceResults + "</ul>");
-            $("#resourceWin").window("close");
+            $("#resourcesId-alarm").val(resourcesId);
+            $("#resourceResults-alarm").html("<ul>"+ resourceResults + "</ul>");
+            $("#resourceWin-alarm").window("close");
         }
     </script>
 </body>

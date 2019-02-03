@@ -46,7 +46,7 @@ public class WxUserService {
     }
 
 
-    public void sendTemplateMessage(String openid, String templateId, String url, Map<String, Object> data) {
+    public String sendTemplateMessage(String openid, String templateId, String url, Map<String, Object> data) {
         String accessToken = accessTokenService.getAccessToken().getAccessToken();
         String requestUrl = String.format(TEMPLATE_MESSAGE, accessToken);
         JSONObject jsonObject = new JSONObject();
@@ -65,6 +65,11 @@ public class WxUserService {
             }
             jsonObject.put("data", jsonData);
         }
-        HttpUtil.doPostJson(requestUrl, jsonObject.toJSONString());
+        return HttpUtil.doPostJson(requestUrl, jsonObject.toJSONString());
+    }
+
+    @Transactional
+    public void saveUserMediaFile(String openId, String batchNo) {
+        wxUserDao.saveUserMediaFile(openId, batchNo);
     }
 }

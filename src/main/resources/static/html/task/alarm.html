@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="easyui-panel" title="" style="width:100%">
+    <div style="padding:10px 60px 20px 60px">
+        <form id="alarmForm" method="post" enctype="multipart/form-data">
+            <table cellpadding="5" width="100%">
+                <tr>
+                    <td>微信用户:</td>
+                    <td>
+                        <input class="easyui-combobox" name="user" id="tp-user"
+                               data-options="method: 'get',multiple:true,valueField:'openid',textField:'name',url:'user/getUsers', width:500">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>设备资源:</td>
+                    <td>
+                        <input type="button" value="选择资源..." onclick="openAlarmResourceWin()">
+                        <input type="hidden" name="resources" id="resourcesId-alarm" value=""/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                       <div id="resourceResults-alarm">
+
+                       </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>报警图片:</td>
+                    <td> <input class="easyui-filebox" name="file" style="width:300px"></td>
+                </tr>
+            </table>
+        </form>
+        <div id="dlg-buttons">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="sendAlarm()">发送</a>
+        </div>
+    </div>
+</div>
+
+<div id="resourceWin-alarm" class="easyui-window" title="选择报警设备" style="width:800px;height:600px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+</div>
+        <script>
+            function sendAlarm() {
+                $("#alarmForm").form("submit", {
+                    url: 'send-alarm-file',
+                    onSubmit: function(param) {
+
+                        var openids = $("#tp-user").combobox("getValues");
+                        if (!openids || openids.length == 0) {
+                            alert("请选择用户");
+                            return false;
+                        }
+                        var resourceIds = JSON.parse($("#resourcesId-alarm").val());
+                        if (!resourceIds || resourceIds.length == 0) {
+                            alert("请选择设备");
+                            return false;
+                        }
+
+                        var userNames = $("#tp-user").combobox("getText");
+                        var detail = {
+                            users: openids,
+                            userNames: userNames,
+                            deviceResource: resourceIds,
+                        };
+                        param.detail = JSON.stringify(detail);
+                    },
+                    success: function(result) {
+
+                        $.messager.show(
+                            {
+                                title: '消息',
+                                msg: '发送报警图片成功',
+                                showType: 'fade',
+                                style:{
+                                    right:'',
+                                    bottom:''
+                                }
+                            });
+/*                        $('#tab').tabs('close', "添加任务");
+                        $("#taskGrid").datagrid('reload');*/
+                    }
+                })
+            }
+
+
+
+            function openAlarmResourceWin() {
+                $("#resourceWin-alarm").window("open");
+                $('#resourceWin-alarm').window('refresh', '/html/device/device-select-alarm.html');
+            }
+
+        </script>
+</body>
+</html>

@@ -25,13 +25,37 @@ function openPage(title, url) {
                 alert('请先关闭“添加任务”Tab选项卡');
                 return;
             }
+
+            if ($("#tab").tabs("exists", "发送报警图片")) {
+                alert('请先关闭“发送报警图片”Tab选项卡');
+                return;
+            }
+
         }
         if (title == "添加任务") {
             if ($("#tab").tabs("exists", "编辑任务")) {
                 alert('请先关闭“编辑任务”Tab选项卡');
                 return;
             }
+
+            if ($("#tab").tabs("exists", "发送报警图片")) {
+                alert('请先关闭“发送报警图片”Tab选项卡');
+                return;
+            }
         }
+
+        if (title == "发送报警图片") {
+            if ($("#tab").tabs("exists", "编辑任务")) {
+                alert('请先关闭“编辑任务”Tab选项卡');
+                return;
+            }
+
+            if ($("#tab").tabs("exists", "添加任务")) {
+                alert('请先关闭“添加任务”Tab选项卡');
+                return;
+            }
+        }
+
         $("#tab").tabs('add', {
             title: title,
             href: url,

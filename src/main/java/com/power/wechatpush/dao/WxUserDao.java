@@ -67,4 +67,14 @@ public class WxUserDao {
         return count.intValue();
     }
 
+
+    public void saveUserMediaFile(String openId, String batchNo) {
+        String sql = "insert into tb_user_file(open_id, media_batch_no) values (:openId, :mediaBatchNo)";
+        Map<String, Object> param = new HashMap<>();
+        param.put("openId", openId);
+        param.put("mediaBatchNo", batchNo);
+        jdbcTemplate.update(sql, param);
+    }
+
+
 }
