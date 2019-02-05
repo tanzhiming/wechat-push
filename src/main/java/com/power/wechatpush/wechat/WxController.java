@@ -94,6 +94,21 @@ public class WxController {
     }
 
 
+    @PostMapping("/menu")
+    public String menu(@RequestBody String menuJson) {
+        AccessToken accessToken = accessTokenService.getAccessToken();
+        String postUrl = String.format("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s", accessToken.getAccessToken());
+        return HttpUtil.doPostJson(postUrl, menuJson);
+    }
+
+
+    @GetMapping("/menu")
+    public String menu() {
+        AccessToken accessToken = accessTokenService.getAccessToken();
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", accessToken.getAccessToken());
+        return HttpUtil.doGet(url);
+    }
+
     public String getUserInfo(String openId) {
         return HttpUtil.doGet(String.format(USER_INFO_URL, accessTokenService.getAccessToken().getAccessToken(), openId));
     }

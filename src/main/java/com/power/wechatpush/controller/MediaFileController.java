@@ -1,6 +1,6 @@
 package com.power.wechatpush.controller;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.power.wechatpush.dao.entity.MediaFile;
@@ -8,6 +8,7 @@ import com.power.wechatpush.service.MediaFileService;
 import com.power.wechatpush.service.WxUserService;
 import com.power.wechatpush.util.CommonUtil;
 import com.power.wechatpush.util.Page;
+import com.power.wechatpush.wechat.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -15,11 +16,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MediaFileController {
@@ -34,11 +40,20 @@ public class MediaFileController {
     @Value("${wx.my.domain}")
     private String domain;
 
+    @Value("${wx.AppID}")
+    private String appId;
+
+    @Value("${wx.AppSecret}")
+    private String appSecret;
+
+
     @Autowired
     private MediaFileService mediaFileService;
 
     @Autowired
     private WxUserService wxUserService;
+
+
 
     @GetMapping("/user-device-detail/{batchNo}")
     public String getWxDeviceList(@PathVariable String batchNo, Model model) {
@@ -166,5 +181,45 @@ public class MediaFileController {
             return "";
         }
         return filename.substring(filename.lastIndexOf("."));
+    }
+
+    @GetMapping("/user-history-file")
+    public String getUserHistoryFile(@CookieValue (value = "openId", required = false)  String openId,
+                                              @RequestParam("type")  String type,
+                                              @RequestParam("page") int page,
+                                              @RequestParam("rows") int rows, Model model) throws UnsupportedEncodingException {
+        if (openId != null) {
+            Page<MediaFile> pages = mediaFileService.getPageForUserMeidaFile(openId, type , page, rows);
+            model.addAttribute("pages", pages);
+            model.addAttribute("mediaType", type);
+            model.addAttribute("mediaPage", page);
+            int totalPage = (pages.getTotal() - 1) / rows + 1;
+            model.addAttribute("hasNextPage", page < totalPage);
+            return "user-history-file";
+        }
+        String redirect = String.format("redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=%s#wechat_redirect",
+            appId, URLEncoder.encode("http://wechat.tunnel.tanzhiming.com/user-history-callback", "utf-8"), type);
+
+        return redirect;
+    }
+
+
+
+    @GetMapping("/user-history-callback")
+    public String userHistoryCallback(@RequestParam("code") String code, @RequestParam("state") String type, Model model, HttpServletResponse response) {
+        String url = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code",
+               appId, appSecret, code);
+        String jsonStr = HttpUtil.doGet(url);
+        JSONObject accessToken = JSON.parseObject(jsonStr);
+        String openId = accessToken.getString("openid");
+        Page<MediaFile> pages = mediaFileService.getPageForUserMeidaFile(openId, type , 1, 50);
+        model.addAttribute("pages", pages);
+        model.addAttribute("mediaPage", 1);
+        model.addAttribute("mediaType", type);
+        int totalPage = (pages.getTotal() - 1) / 50 + 1;
+        model.addAttribute("hasNextPage", 1 < totalPage);
+        Cookie cookie = new Cookie("openId", openId);
+        response.addCookie(cookie);
+        return "user-history-file";
     }
 }

@@ -67,6 +67,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/user-device-detail/**", "anon");
         filterChainDefinitionMap.put("/play/**", "anon");
         filterChainDefinitionMap.put("/resources/**", "anon");
+        filterChainDefinitionMap.put("/user-history-file/**", "anon");
+        filterChainDefinitionMap.put("/user-history-callback/**", "anon");
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

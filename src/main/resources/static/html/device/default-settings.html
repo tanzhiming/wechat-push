@@ -15,9 +15,21 @@
                     </td>
                 </tr>
                 <tr>
+                    <td></td>
+                    <td>
+                        <span id="imagePath"></span>
+                    </td>
+                </tr>
+                <tr>
                     <td>视频:</td>
                     <td>
                         <input class="easyui-filebox" name="video-file" id="video-file" style="width:300px" data-options="buttonText: '选择文件'">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span id="videoPath"></span>
                     </td>
                 </tr>
                 <tr>
@@ -33,6 +45,11 @@
     </div>
 
     <script>
+
+        $(document).ready(function () {
+
+        });
+
         function saveDefaultSettings() {
             $("#default-settings-form").form("submit", {
                 url: 'device/default-image-and-video',
