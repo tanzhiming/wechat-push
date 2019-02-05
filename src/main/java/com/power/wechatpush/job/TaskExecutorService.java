@@ -29,7 +29,7 @@ public class TaskExecutorService {
 
     private long[] sesson;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         int ret = VideoSDK.initialize();
         LOG.info("初始化完成, ret={}\n", ret);
@@ -41,7 +41,7 @@ public class TaskExecutorService {
         LOG.info("VADR GlobalInit 完成");
     }
 
-    @PreDestroy
+//    @PreDestroy
     public void destroy() {
         VideoSDK.vardrGlobalClose();
 

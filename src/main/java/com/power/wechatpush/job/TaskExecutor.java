@@ -87,7 +87,15 @@ public class TaskExecutor {
                    public Integer call() throws Exception {
                        int ret = -1;
 
-                       ret = recordMedia(taskExecutorService.getSesson(), puid, index, isVideo1, duration, filename);
+                       try {
+                           taskExecutorService.init();
+                           ret = recordMedia(taskExecutorService.getSesson(), puid, index, isVideo1, duration, filename);
+                       } catch (Throwable e) {
+                           String filename2 = "/resources/default/" + puid + "-"+ index;
+                       } finally {
+                           taskExecutorService.destroy();
+                       }
+
                        if (ret == 0) {
                            List<MediaFile> mediaFiles = new ArrayList<>();
                            MediaFile file = new MediaFile();
@@ -157,8 +165,7 @@ public class TaskExecutor {
     }
 
     private int recordMedia(long session,String puid, int index, int isVideo,int duration, String filename) {
-        VideoSDK.recordMedia(session, puid, index, isVideo, duration, filename);
-        return 0;
+        return VideoSDK.recordMedia(session, puid, index, isVideo, duration, filename);
     }
 
 
