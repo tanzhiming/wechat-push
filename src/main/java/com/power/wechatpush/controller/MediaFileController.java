@@ -198,7 +198,7 @@ public class MediaFileController {
             return "user-history-file";
         }
         String redirect = String.format("redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=%s#wechat_redirect",
-            appId, URLEncoder.encode("http://wechat.tunnel.tanzhiming.com/user-history-callback", "utf-8"), type);
+            appId, URLEncoder.encode(domain +"/user-history-callback", "utf-8"), type);
 
         return redirect;
     }
