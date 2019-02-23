@@ -86,41 +86,45 @@ public class TaskExecutor {
                    @Override
                    public Integer call() throws Exception {
                        int ret = -1;
-
                        try {
                            taskExecutorService.init();
                            ret = recordMedia(taskExecutorService.getSesson(), puid, index, isVideo1, duration, filename);
                        } catch (Throwable e) {
-                           String filename2 = "/resources/default/" + puid + "-"+ index;
+                           //String filename2 = "/resources/default/" + puid + "-"+ index;
+                           LOG.error("录制失败", e);
                        } finally {
                            taskExecutorService.destroy();
                        }
-
+                       String srcFileName;
                        if (ret == 0) {
-                           List<MediaFile> mediaFiles = new ArrayList<>();
-                           MediaFile file = new MediaFile();
+                            srcFileName = filename2;
+                       } else {
+                           srcFileName = "/resources/default/" + puid + "-"+ index;
+                       }
+
+                       List<MediaFile> mediaFiles = new ArrayList<>();
+                       MediaFile file = new MediaFile();
+                       file.setBatchNo(batchNo);
+                       file.setCreateTime(new Date());
+                       file.setFileType("image");
+                       file.setFileName(srcFileName + ".jpg");
+                       file.setTaskName(taskName);
+                       file.setDevName(devName);
+                       file.setResName(resName);
+                       mediaFiles.add(file);
+                       if (isVideo1 == 1) {
+                           file = new MediaFile();
                            file.setBatchNo(batchNo);
                            file.setCreateTime(new Date());
-                           file.setFileType("image");
-                           file.setFileName(filename2 + ".jpg");
+                           file.setFileType("video");
+                           file.setFileName(srcFileName + ".mp4");
                            file.setTaskName(taskName);
                            file.setDevName(devName);
                            file.setResName(resName);
                            mediaFiles.add(file);
-                           if (isVideo1 == 1) {
-                              file = new MediaFile();
-                               file.setBatchNo(batchNo);
-                               file.setCreateTime(new Date());
-                               file.setFileType("video");
-                               file.setFileName(filename2 + ".mp4");
-                               file.setTaskName(taskName);
-                               file.setDevName(devName);
-                               file.setResName(resName);
-                               mediaFiles.add(file);
-                           }
-                           mediaFileService.saveMediaFiles(mediaFiles);
                        }
-                       return ret;
+                       mediaFileService.saveMediaFiles(mediaFiles);
+                       return 0;
                    }
                 }));
             }
