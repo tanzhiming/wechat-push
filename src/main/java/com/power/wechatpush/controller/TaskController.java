@@ -60,7 +60,7 @@ public class TaskController {
         if (task.getType() == Task.TYPE_TIMING) {
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put("task", task);
-            JobDetail jobDetail = JobBuilder.newJob(TimingTaskJob.class).withIdentity(jobKey).setJobData(jobDataMap).build();
+            JobDetail jobDetail = JobBuilder.newJob(TimingTaskJob.class).withIdentity(jobKey).setJobData(jobDataMap).requestRecovery(true).build();
             Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(task.getCronExpress())).build();
             scheduler.scheduleJob(jobDetail, trigger);
         }
@@ -90,7 +90,7 @@ public class TaskController {
         if (task.getType() == Task.TYPE_TIMING) {
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put("task", task);
-            JobDetail jobDetail = JobBuilder.newJob(TimingTaskJob.class).withIdentity(jobKey).setJobData(jobDataMap).build();
+            JobDetail jobDetail = JobBuilder.newJob(TimingTaskJob.class).withIdentity(jobKey).setJobData(jobDataMap).requestRecovery(true).build();
             Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(task.getCronExpress())).build();
             scheduler.scheduleJob(jobDetail, trigger);
         }

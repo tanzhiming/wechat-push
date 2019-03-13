@@ -87,13 +87,13 @@ public class TaskExecutor {
                    public Integer call() throws Exception {
                        int ret = -1;
                        try {
-                           taskExecutorService.init();
-                           ret = recordMedia(taskExecutorService.getSesson(), puid, index, isVideo1, duration, filename);
+//                           taskExecutorService.init();
+                           ret = recordMedia(address, username, password, epid, puid, index, isVideo1, duration, filename);
                        } catch (Throwable e) {
                            //String filename2 = "/resources/default/" + puid + "-"+ index;
                            LOG.error("录制失败", e);
                        } finally {
-                           taskExecutorService.destroy();
+//                           taskExecutorService.destroy();
                        }
                        String srcFileName;
                        if (ret == 0) {
@@ -170,6 +170,10 @@ public class TaskExecutor {
 
     private int recordMedia(long session,String puid, int index, int isVideo,int duration, String filename) {
         return VideoSDK.recordMedia(session, puid, index, isVideo, duration, filename);
+    }
+
+    private int recordMedia(String address, String username, String password, String epid,String puid, int index, int isVideo,int duration, String filename) {
+        return VideoSDK.recordMediaNew(address,username, password, epid, puid, index, isVideo, duration, filename);
     }
 
 
