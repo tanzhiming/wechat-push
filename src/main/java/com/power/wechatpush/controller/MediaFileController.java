@@ -159,8 +159,10 @@ public class MediaFileController {
                 System.out.println("wechat push openid: " + openid + ", batchNo: " + batchNo);
                 String url = domain + "/user-device-detail/" + batchNo;
                 Map<String, Object> data = new HashMap<>();
-                data.put("taskNo", "alarmTask");
-                data.put("triggerTime", sdf1.format(new Date()));
+                data.put("first", "");
+                data.put("keyword1", "alarmTask");
+                data.put("keyword2", sdf1.format(new Date()));
+                data.put("remark", "");
                 String res = wxUserService.sendTemplateMessage(openid, templateId, url, data);
                 System.out.println(res);
             }

@@ -120,9 +120,16 @@ public class HttpUtil {
             e.printStackTrace();
         } finally {
             try {
-                response.close();
+                if (response != null) {
+                    response.close();
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            try {
+                httpClient.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

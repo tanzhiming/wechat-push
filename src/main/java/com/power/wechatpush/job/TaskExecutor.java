@@ -149,8 +149,10 @@ public class TaskExecutor {
                 System.out.println("wechat push openid: " + openid + ", batchNo: " + batchNo);
                 String url = domain + "/user-device-detail/" + batchNo;
                 Map<String, Object> data = new HashMap<>();
-                data.put("taskNo", task.getName());
-                data.put("triggerTime", sdf1.format(new Date()));
+                data.put("first", "");
+                data.put("keyword1", task.getName());
+                data.put("keyword2", sdf1.format(new Date()));
+                data.put("remark", "");
                 wxUserService.sendTemplateMessage(openid, templateId, url, data);
             }
 
