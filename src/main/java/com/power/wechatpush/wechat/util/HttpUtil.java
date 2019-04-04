@@ -49,6 +49,10 @@ public class HttpUtil {
                 if (response != null) {
                     response.close();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
                 httpclient.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -87,9 +91,15 @@ public class HttpUtil {
             e.printStackTrace();
         } finally {
             try {
-                response.close();
+                if (response != null) {
+                    response.close();
+                }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            try {
+                httpClient.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -124,7 +134,6 @@ public class HttpUtil {
                     response.close();
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             try {
