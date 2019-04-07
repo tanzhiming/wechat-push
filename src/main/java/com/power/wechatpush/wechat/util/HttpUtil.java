@@ -45,17 +45,18 @@ public class HttpUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (response != null) {
+            if (response != null) {
+                try {
                     response.close();
+                } catch (IOException e) {
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if (httpclient != null) {
+                try {
+                    httpclient.close();
+                } catch (IOException e) {
+                }
             }
         }
         return resultString;
@@ -90,17 +91,18 @@ public class HttpUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (response != null) {
+            if (response != null) {
+                try {
                     response.close();
+                } catch (IOException e) {
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                }
             }
         }
 
@@ -129,17 +131,18 @@ public class HttpUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (response != null) {
+            if (response != null) {
+                try {
                     response.close();
+                } catch (IOException e) {
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                }
             }
         }
         return resultString;

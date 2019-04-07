@@ -5,10 +5,13 @@ import com.power.wechatpush.dao.WxUserDao;
 import com.power.wechatpush.dao.entity.WxUser;
 import com.power.wechatpush.util.Page;
 import com.power.wechatpush.wechat.AccessTokenService;
-import com.power.wechatpush.wechat.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,9 @@ public class WxUserService {
 
     @Autowired
     private AccessTokenService accessTokenService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Transactional
     public Long saveUser(WxUser user) {
@@ -65,7 +71,14 @@ public class WxUserService {
             }
             jsonObject.put("data", jsonData);
         }
-        return HttpUtil.doPostJson(requestUrl, jsonObject.toJSONString());
+
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<String> formEntity = new HttpEntity<String>(jsonObject.toString(), headers);
+        return restTemplate.postForObject(requestUrl, formEntity, String.class);
+//        return HttpUtil.doPostJson(requestUrl, jsonObject.toJSONString());
     }
 
     @Transactional

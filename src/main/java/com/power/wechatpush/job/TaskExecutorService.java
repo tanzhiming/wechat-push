@@ -56,8 +56,14 @@ public class TaskExecutorService {
     private ThreadPoolExecutor threadPoolExecutor =  new ThreadPoolExecutor(1, 1,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
-    public <T> Future<T> submit(Callable<T> task) {
+    public synchronized  <T> Future<T> submit(Callable<T> task) {
         return threadPoolExecutor.submit(task);
+    }
+
+    public synchronized void restart() {
+        threadPoolExecutor.shutdownNow();
+        threadPoolExecutor = new ThreadPoolExecutor(1, 1,
+                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
 

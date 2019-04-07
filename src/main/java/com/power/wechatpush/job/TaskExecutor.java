@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class TaskExecutor {
 
@@ -131,7 +132,13 @@ public class TaskExecutor {
 
             int allRet = 0;
             for (int i = 0; i < futures.size(); i++) {
-                int ret = futures.get(i).get(10, TimeUnit.MINUTES);
+                int ret = -1;
+                try {
+                    ret = futures.get(i).get(3, TimeUnit.MINUTES);
+                } catch (TimeoutException e) {
+                    taskExecutorService.restart();
+                    throw new RuntimeException("设备录制超时");
+                }
                 if (ret != 0) {
                     allRet = -1;
                     break;
