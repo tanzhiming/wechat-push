@@ -100,6 +100,7 @@ public class TaskExecutor {
                        if (ret == 0) {
                             srcFileName = filename2;
                        } else {
+                           LOG.warn("recordMedia error, ret code: {}", ret);
                            srcFileName = "/resources/default/" + puid + "-"+ index;
                        }
 
